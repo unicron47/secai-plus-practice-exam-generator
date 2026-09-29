@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#101319">
+<title>SecAI+ Adaptive Practice Exam</title>
+<meta name="description" content="Adaptive 40-question, 40-minute practice exam for CompTIA SecAI+ (CY0-001).">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>🖧</text></svg>">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">SecAI+ <span>Adaptive Practice</span></div>
+  <div class="topbar-right">
+    <div id="timer" class="timer" hidden><span id="timer-text">40:00</span></div>
+    <div id="who" class="who"></div>
+  </div>
+</header>
+
+<!-- ───────────────────────── HOME ───────────────────────── -->
+<main id="view-home" class="view">
+  <section class="card">
+    <h1>Adaptive practice exam</h1>
+    <p class="lede">
+      Your first exam is drawn at random. After that, questions you have missed are weighted
+      to come back more often &mdash; and the more times you miss a question, the more likely
+      it is to reappear until you get it right twice in a row.
+    </p>
+
+    <ul class="specs">
+      <li><b>40</b><span>questions</span></li>
+      <li><b>40</b><span>minutes</span></li>
+      <li><b id="spec-bank">&ndash;</b><span>in the bank</span></li>
+      <li><b>Adaptive</b><span>retry weighting</span></li>
+    </ul>
+
+    <label class="field">
+      <span>Your name or student ID</span>
+      <input id="profile-input" type="text" autocomplete="off" spellcheck="false"
+             placeholder="e.g. jdoe" maxlength="40">
+    </label>
+    <p class="hint">
+      Progress is saved in <strong>this browser only</strong>. Use the same name and the same
+      computer each time, or use <em>Export progress</em> below to move it.
+    </p>
+
+    <label class="check">
+      <input id="opt-shuffle" type="checkbox" checked>
+      <span>Shuffle answer choices (recommended &mdash; stops you memorizing letters)</span>
+    </label>
+
+    <div class="actions">
+      <button id="btn-start" class="btn primary">Start exam</button>
+      <button id="btn-resume" class="btn" hidden>Resume exam in progress</button>
+    </div>
+  </section>
+
+  <section id="stats-card" class="card" hidden>
+    <h2>Your progress</h2>
+    <div class="stat-grid">
+      <div class="stat"><b id="st-attempts">0</b><span>exams taken</span></div>
+      <div class="stat"><b id="st-seen">0</b><span>of <i id="st-total">0</i> seen</span></div>
+      <div class="stat"><b id="st-weak">0</b><span>still weak</span></div>
+      <div class="stat"><b id="st-mastered">0</b><span>mastered</span></div>
+      <div class="stat"><b id="st-best">&ndash;</b><span>best score</span></div>
+      <div class="stat"><b id="st-last">&ndash;</b><span>last score</span></div>
+    </div>
+    <h3 class="hist-title">Score history</h3>
+    <div id="history" class="history"></div>
+    <details class="weak-list">
+      <summary>Questions you are still missing (<span id="weak-count">0</span>)</summary>
+      <ol id="weak-items"></ol>
+    </details>
+    <div class="actions secondary">
+      <button id="btn-export" class="btn small">Export progress</button>
+      <button id="btn-import" class="btn small">Import progress</button>
+      <input id="file-import" type="file" accept="application/json" hidden>
+      <button id="btn-reset" class="btn small danger">Reset my progress</button>
+    </div>
+  </section>
+</main>
+
+<!-- ───────────────────────── EXAM ───────────────────────── -->
+<main id="view-exam" class="view" hidden>
+  <div class="exam-layout">
+    <section class="card question-card">
+      <div class="qhead">
+        <span class="qcount">Question <b id="q-index">1</b> of <b id="q-total">40</b></span>
+        <span id="q-type" class="badge" hidden>Select all that apply</span>
+        <button id="btn-flag" class="btn flag" aria-pressed="false">
+          <span class="flag-icon">⚑</span> <span class="flag-label">Flag for review</span>
+        </button>
+      </div>
+
+      <div id="q-text" class="qtext"></div>
+      <form id="q-options" class="options"></form>
+
+      <div class="qnav">
+        <button id="btn-prev" class="btn">&larr; Previous</button>
+        <button id="btn-clear" class="btn small ghost">Clear answer</button>
+        <button id="btn-next" class="btn">Next &rarr;</button>
+      </div>
+    </section>
+
+    <aside class="card side">
+      <h2>Question navigator</h2>
+      <div id="grid" class="grid"></div>
+      <ul class="legend">
+        <li><i class="sw answered"></i> answered</li>
+        <li><i class="sw flagged"></i> flagged</li>
+        <li><i class="sw"></i> unanswered</li>
+      </ul>
+
+      <div class="flagged-block">
+        <h3>Flagged (<span id="flag-count">0</span>)</h3>
+        <ol id="flag-list" class="flag-list"><li class="empty">Nothing flagged yet.</li></ol>
+      </div>
+
+      <p class="progress-line"><span id="answered-count">0</span> of 40 answered</p>
+      <button id="btn-submit" class="btn primary wide">Submit exam</button>
+      <p class="hint kbd"><kbd>1</kbd>&ndash;<kbd>6</kbd> answer &middot; <kbd>&larr;</kbd><kbd>&rarr;</kbd> move &middot; <kbd>F</kbd> flag</p>
+    </aside>
+  </div>
+</main>
+
+<!-- ──────────────────────── RESULTS ──────────────────────── -->
+<main id="view-results" class="view" hidden>
+  <section class="card">
+    <h1>Results</h1>
+    <div class="score-row">
+      <div id="score-ring" class="ring"><b id="score-pct">0%</b></div>
+      <div class="score-facts">
+        <p><b id="score-raw">0 / 40</b> correct</p>
+        <p id="score-time" class="muted"></p>
+        <p id="score-note" class="muted"></p>
+      </div>
+    </div>
+    <div class="actions">
+      <button id="btn-again" class="btn primary">Take another exam</button>
+      <button id="btn-home" class="btn">Back to start</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Review</h2>
+    <div class="review-filter">
+      <label class="check"><input id="only-wrong" type="checkbox"> <span>Show only the ones I missed</span></label>
+    </div>
+    <ol id="review" class="review"></ol>
+  </section>
+</main>
+
+<div id="modal" class="modal" hidden>
+  <div class="modal-box">
+    <h2 id="modal-title">Submit exam?</h2>
+    <p id="modal-body"></p>
+    <div class="actions">
+      <button id="modal-ok" class="btn primary">Submit</button>
+      <button id="modal-cancel" class="btn">Keep working</button>
+    </div>
+  </div>
+</div>
+
+<footer class="foot">
+  <span id="foot-count"></span> question bank &middot; progress stored locally in your browser
+</footer>
+
+<script src="js/app.js"></script>
+</body>
+</html>
