@@ -345,9 +345,10 @@
     "Output token controls"
    ],
    "answer": [
-    0,
-    4
-   ]
+    4,
+    5
+   ],
+   "explanation": "API rate controls and output token controls limit excessive resource consumption that drives denial-of-wallet costs, while endpoint access controls and CDNs address different attack vectors like unauthorized access or network-layer DDoS."
   },
   {
    "id": "7235b2219e",
@@ -464,8 +465,9 @@
     "Model hijacking"
    ],
    "answer": [
-    3
-   ]
+    1
+   ],
+   "explanation": "An on-path attacker intercepting and manipulating the session between user and application can alter responses and inject offensive content, indicating session hijacking. Model hijacking would involve compromising the model itself, not intercepting communications."
   },
   {
    "id": "6a64b73d65",
@@ -582,8 +584,9 @@
     "Reducing the privilege scope of the service account"
    ],
    "answer": [
-    2
+    3
    ],
+   "explanation": "The script shows the service account has excessive permissions (deleteBuckets, getObjects, listAcl, listPermissions) beyond what a file search function needs, so reducing the privilege scope of the service account directly addresses the abuse. Guardrails or detection rules don't fix the root over-permissioning issue.",
    "images": [
     "images/q0034-1.png"
    ],
@@ -824,7 +827,8 @@
    ],
    "answer": [
     0
-   ]
+   ],
+   "explanation": "Long short-term memory networks are recurrent models built to learn patterns in sequential, unstructured data such as text, log streams, or network traffic, retaining context across long sequences. A convolutional neural network is tuned to spatial grid data like images, while decision trees and logistic regression require structured, labeled feature sets."
   },
   {
    "id": "ba51b803a0",
@@ -1009,8 +1013,9 @@
     "Cost monitoring"
    ],
    "answer": [
-    0
-   ]
+    1
+   ],
+   "explanation": "Implementing a response confidence level lets the chatbot avoid low-confidence non-answers, reducing wasted CPU cycles on unhelpful responses. Guardrails control content safety, not confidence-based response filtering."
   },
   {
    "id": "4a4cbbbb94",
@@ -1060,8 +1065,9 @@
     "Guardrails"
    ],
    "answer": [
-    1
-   ]
+    3
+   ],
+   "explanation": "Guardrails filter and constrain inputs/outputs to prevent manipulation causing inappropriate recommendations, directly addressing adversarial input manipulation, unlike feature scaling or regularization which address model training issues, not runtime manipulation."
   },
   {
    "id": "6dab2e3d85",
@@ -1896,7 +1902,8 @@
    ],
    "answer": [
     3
-   ]
+   ],
+   "explanation": "The chatbot drifted into vague, generic output because the input gave it no structure or domain context; prompt templates enforce a consistent, grounded format that steers the model toward accurate, domain-specific answers. Guardrails filter unsafe, toxic, or out-of-scope content, but this response is unhelpful rather than harmful, and encryption or access controls address confidentiality, not output quality."
   },
   {
    "id": "dd8e0ab309",
